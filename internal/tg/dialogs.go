@@ -145,9 +145,10 @@ func (c *Client) GetDialogs(args DialogsArguments) (*mcp.ToolResponse, error) {
 					}
 
 					info.LastMessages = append(info.LastMessages, MessageInfo{
-						Who:  who,
-						When: time.Unix(int64(msg.Date), 0).Format(time.DateTime),
-						Text: text,
+						Who:      who,
+						When:     time.Unix(int64(msg.Date), 0).Format(time.DateTime),
+						Text:     text,
+						IsUnread: dialogItem.UnreadCount > 0,
 					})
 				}
 			}
