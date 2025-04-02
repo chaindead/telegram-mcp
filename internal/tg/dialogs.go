@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/gotd/td/tg"
 	mcp "github.com/metoro-io/mcp-golang"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 )
 
 // DialogType represents the type of dialog for filtering
@@ -70,10 +72,14 @@ func (c *Client) GetDialogs(args DialogsArguments) (*mcp.ToolResponse, error) {
 		api := client.API()
 		dialogsClass, err := api.MessagesGetDialogs(ctx, &tg.MessagesGetDialogsRequest{
 			OffsetPeer: &tg.InputPeerEmpty{},
+			Limit:      20,
 		})
 		if err != nil {
 			return fmt.Errorf("failed to get dialogs: %w", err)
 		}
+
+		jsonData, _ := json.Marshal(dialogsClass)
+		log.Info().RawJSON("dialogs", cleanJSON(jsonData)).Msg("dialogs")
 
 		var dialogs *tg.MessagesDialogs
 		switch d := dialogsClass.(type) {
@@ -90,6 +96,25 @@ func (c *Client) GetDialogs(args DialogsArguments) (*mcp.ToolResponse, error) {
 			return errors.New("unexpected dialogs response type")
 		}
 
+		messageMap := make(map[string][]*tg.Message)
+		for _, m := range dialogs.Messages {
+			msg, ok := m.(*tg.Message)
+			if !ok {
+				continue
+			}
+
+			if msg.PeerID == nil {
+				continue
+			}
+
+			messageMap[msg.PeerID.String()] = append(messageMap[msg.PeerID.String()], msg)
+		}
+
+		usersMap := make(map[string]tg.UserClass)
+		for _, u := range dialogs.Users {
+			usersMap["Peer"+u.String()] = u
+		}
+
 		result = make([]DialogInfo, 0, len(dialogs.Dialogs))
 
 		for _, dialog := range dialogs.Dialogs {
@@ -103,22 +128,27 @@ func (c *Client) GetDialogs(args DialogsArguments) (*mcp.ToolResponse, error) {
 			info.LastMessageID = dialogItem.TopMessage
 
 			if args.WithLastMessages {
-				for _, msg := range dialogs.Messages {
-					message, ok := msg.(*tg.Message)
-					if !ok {
-						continue
+				msgs := messageMap[dialogItem.Peer.String()]
+				for _, msg := range msgs {
+					var who string
+					if msg.FromID != nil {
+						if u, ok := usersMap[msg.FromID.String()]; ok {
+							who = u.String()
+						}
 					}
 
-					var who string
-					if message.FromID != nil {
-						who = message.FromID.String()
+					// Limit message to 20 words
+					text := msg.Message
+					words := strings.Fields(text)
+					if len(words) > 20 {
+						text = strings.Join(words[:20], " ") + "..."
 					}
 
 					info.LastMessages = append(info.LastMessages, MessageInfo{
 						Who:      who,
-						When:     time.Unix(int64(message.Date), 0).Format(time.DateTime),
-						Text:     message.Message,
-						IsUnread: !message.Out,
+						When:     time.Unix(int64(msg.Date), 0).Format(time.DateTime),
+						Text:     text,
+						IsUnread: dialogItem.UnreadCount > 0,
 					})
 				}
 			}
@@ -206,15 +236,6 @@ func (c *Client) GetDialogs(args DialogsArguments) (*mcp.ToolResponse, error) {
 		return nil, errors.Wrap(err, "failed to marshal response")
 	}
 
-	return mcp.NewToolResponse(mcp.NewTextContent(string(jsonData))), nil
-}
-
-// Helper function to get user's name
-func getUserName(user *tg.User) string {
-	name := user.FirstName
-	if user.LastName != "" {
-		name += " " + user.LastName
-	}
-
-	return name
+	cleanedData := cleanJSON(jsonData)
+	return mcp.NewToolResponse(mcp.NewTextContent(string(cleanedData))), nil
 }

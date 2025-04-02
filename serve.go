@@ -56,14 +56,19 @@ func serve(ctx context.Context, cmd *cli.Command) error {
 		return nil
 	}
 
-	err = server.RegisterTool("me", "Get current Telegram account info", client.GetMe)
+	err = server.RegisterTool("tg_me", "Get current account info", client.GetMe)
 	if err != nil {
 		return fmt.Errorf("register tool: %w", err)
 	}
 
-	err = server.RegisterTool("dialogs", "Get list of dialogs (chats, channels, groups)", client.GetDialogs)
+	err = server.RegisterTool("tg_dialogs", "Get list of dialogs (chats, channels, groups)", client.GetDialogs)
 	if err != nil {
 		return fmt.Errorf("register dialogs tool: %w", err)
+	}
+
+	err = server.RegisterResource("telegram://chats", "tg_chats", "List of telegram chats", "application/json", sampleResource)
+	if err != nil {
+		return fmt.Errorf("register chats resource: %w", err)
 	}
 
 	if err := server.Serve(); err != nil {

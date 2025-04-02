@@ -46,7 +46,10 @@ tasks:
     desc: Run linter
     cmd: golangci-lint run --fix ./...
 
-# git tag -a v0.1.1 -m "Added releases"
-# git push origin v0.1.0
+  tag:
+    desc: Create a new tag
+    cmds:
+      - git tag -a v0.1.4 -m "Dialog fix"
+      - git push origin v0.1.4
 
 
