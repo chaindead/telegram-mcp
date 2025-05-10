@@ -79,6 +79,17 @@ func serve(ctx context.Context, cmd *cli.Command) error {
 			log.Info().RawJSON("answer", []byte(answer.Content[0].TextContent.Text)).Msg("Check ReadHistory: OK")
 		}
 
+		answer, err = client.GetUserMessages(tg.UserMessagesArguments{
+			Name:     os.Getenv("TG_TEST_GROUPNAME"),
+			Username: os.Getenv("TG_TEST_USERNAME"),
+			Limit:    100,
+		})
+		if err != nil {
+			log.Err(err).Msg("Check GetUserMessages: FAIL")
+		} else {
+			log.Info().RawJSON("answer", []byte(answer.Content[0].TextContent.Text)).Msg("Check GetUserMessages: OK")
+		}
+
 		return nil
 	}
 
@@ -105,6 +116,11 @@ func serve(ctx context.Context, cmd *cli.Command) error {
 	err = server.RegisterTool("tg_read", "Mark dialog messages as read", client.ReadHistory)
 	if err != nil {
 		return fmt.Errorf("register read tool: %w", err)
+	}
+
+	err = server.RegisterTool("tg_user_messages", "Get messages sent by a specific user in a group or channel", client.GetUserMessages)
+	if err != nil {
+		return fmt.Errorf("register user messages tool: %w", err)
 	}
 
 	if err := server.Serve(); err != nil {
