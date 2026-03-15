@@ -34,6 +34,7 @@ type DialogsArguments struct {
 }
 
 type MessageInfo struct {
+	ID       int    `json:"id,omitempty"`
 	Who      string `json:"who,omitempty"`
 	When     string `json:"when"`
 	Text     string `json:"text,omitempty"`
@@ -251,6 +252,7 @@ func (d *dialogs) processDialog(dialogItem *tg.Dialog) (DialogInfo, error) {
 		}
 
 		info.LastMessage = &MessageInfo{
+			ID:       msg.ID,
 			Who:      who,
 			When:     time.Unix(int64(msg.Date), 0).Format(time.DateTime),
 			ts:       msg.Date,
