@@ -67,6 +67,10 @@ Here are some example prompts you can use with AI assistants:
 - "Draft a polite response to the last message in [chat]"
 - "Check if there are any unanswered questions in my chats"
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/chaindead-telegram-mcp).
+
 ## Installation
 
 ### Homebrew
