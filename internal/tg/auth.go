@@ -19,11 +19,13 @@ func Auth(phone string, appID int64, appHash string, sessionPath string, passwor
 		_ = os.Remove(sessionPath)
 	}
 
-	client := telegram.NewClient(int(appID), appHash, telegram.Options{
+	opts := telegram.Options{
 		SessionStorage: &telegram.FileSessionStorage{
 			Path: sessionPath,
 		},
-	})
+	}
+	opts, _ = telegram.OptionsFromEnvironment(opts)
+	client := telegram.NewClient(int(appID), appHash, opts)
 
 	sessionDir := filepath.Dir(sessionPath)
 	if err := os.MkdirAll(sessionDir, 0700); err != nil {
