@@ -221,7 +221,7 @@ Before you can use the server, you need to connect to the Telegram API.
 
 ### Client Configuration
 
-Example of Configuring Claude Desktop to recognize the Telegram MCP server.
+#### Claude Desktop
 
 1. Open the Claude Desktop configuration file:
     - in MacOS, the configuration file is located at `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -230,9 +230,7 @@ Example of Configuring Claude Desktop to recognize the Telegram MCP server.
    > __Note:__
    > You can also find claude_desktop_config.json inside the settings of Claude Desktop app
 
-2. Add the server configuration
-   
-   for Claude desktop:
+2. Add the server configuration:
    ```json
     {
       "mcpServers": {
@@ -249,8 +247,31 @@ Example of Configuring Claude Desktop to recognize the Telegram MCP server.
     }
    ```
 
-   for Cursor:
-    ```json
+#### GitHub Copilot Desktop
+
+1. Open the GitHub Copilot Desktop configuration file:
+    - in MacOS, the configuration file is located at `~/.copilot/desktop/config.json`
+    - in Windows, the configuration file is located at `%APPDATA%\GitHub\Copilot\hosts.json`
+
+2. Add the server configuration:
+   ```json
+    {
+      "mcpServers": {
+        "telegram": {
+          "command": "telegram-mcp",
+          "env": {
+            "TG_APP_ID": "<your-app-id>",
+            "TG_API_HASH": "<your-api-hash>"
+          }
+        }
+      }
+    }
+   ```
+
+#### Cursor
+
+1. Add the server configuration to your Cursor MCP settings:
+   ```json
     {
       "mcpServers": {
         "telegram-mcp": {
