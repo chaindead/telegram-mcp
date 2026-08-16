@@ -276,10 +276,10 @@ Common values:
 
 ## Star History
 
-<a href="https://www.star-history.com/#chaindead/telegram-mcp&Date">
+<a href="https://star-history.dera.page/#chaindead/telegram-mcp&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=chaindead/telegram-mcp&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=chaindead/telegram-mcp&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=chaindead/telegram-mcp&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=chaindead/telegram-mcp&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=chaindead/telegram-mcp&type=Date" />
+   <img alt="Star History Chart" src="https://star-history.dera.page/svg?repos=chaindead/telegram-mcp&type=Date" />
  </picture>
 </a>
