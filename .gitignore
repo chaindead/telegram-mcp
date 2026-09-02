@@ -73,3 +73,7 @@ bin/
 log.txt
 mcp.log
 dist/
+
+# Local binaries
+telegram-mcp
+telegram-mcp-out
