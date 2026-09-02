@@ -19,11 +19,18 @@ func Auth(phone string, appID int64, appHash string, sessionPath string, passwor
 		_ = os.Remove(sessionPath)
 	}
 
-	client := telegram.NewClient(int(appID), appHash, telegram.Options{
+	opts := telegram.Options{
 		SessionStorage: &telegram.FileSessionStorage{
 			Path: sessionPath,
 		},
-	})
+	}
+	if newOpts, err := telegram.OptionsFromEnvironment(opts); err != nil {
+		log.Warn().Err(err).Msg("Failed to load OptionsFromEnvironment, skipping")
+	} else {
+		opts = newOpts
+	}
+
+	client := telegram.NewClient(int(appID), appHash, opts)
 
 	sessionDir := filepath.Dir(sessionPath)
 	if err := os.MkdirAll(sessionDir, 0700); err != nil {
